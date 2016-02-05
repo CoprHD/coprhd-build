@@ -1,0 +1,143 @@
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'maven-publish'
+
+group = 'com.emc.vipr.platform'
+version = buildVersion()
+logger.quiet("Building ${group}:${name}:${version}")
+
+loadPublishConfig()
+
+repositories {
+    mavenCentral()
+    maven {
+        name "artifactory"
+        url artifactoryUrl
+    }
+}
+
+dependencies {
+    compile 'de.undercouch:gradle-download-task:1.2'
+    compile gradleApi()
+    compile localGroovy()
+    compile "commons-lang:commons-lang:2.6"
+    compile "com.jcraft:jsch:0.1.53"
+    compile "org.lesscss:lesscss:1.7.0.1.1"
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    if (publishUrl) {
+        repositories {
+            maven {
+                name "publish"
+                url publishUrl
+                credentials {
+                    username projectProperty('publishUsername')
+                    password projectProperty('publishPassword')
+                }
+            }
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes (
+            "Implementation-Title": "${project.group}:${project.name}",
+            "Implementation-Version": version,
+            "Build-Version": version,
+            "Build-Date": new Date().format('yyy-MM-dd HH:mm:ssZ'),
+            "Git-Version": gitVersion(),
+            "Git-Branch": gitBranch() ?: ''
+        )
+        def diffStat = gitDiffStat()
+        if (diffStat) {
+            attributes "Git-Modified": diffStat
+        }
+    }
+}
+
+def projectProperty(String name) {
+    hasProperty(name) ? getProperty(name) : null
+}
+
+def buildVersion() {
+    def publishVer = projectProperty('publishVersion')
+    if (publishVer) {
+        return publishVer
+    }
+    def buildVer = projectProperty('buildVersion')
+    return buildVer ? "${baseVersion}.${buildVer}" : gitVersion()
+}
+
+def gitVersion() {
+    String commits = gitExec("rev-list HEAD --count")
+    String hash = gitExec("rev-parse HEAD")?.substring(0, 7)
+    return (commits && hash) ? "${baseVersion}.${commits}.${hash}" : "${baseVersion}-SNAPSHOT"
+}
+
+def gitBranch() {
+    def branch = gitExec("rev-parse --abbrev-ref HEAD")
+    // Happens if the commit is checked out in a detached state
+    if (branch == 'HEAD') {
+        def branches = gitExec("branch --contains HEAD")?.readLines()?.findAll{
+             !it.contains("detached from")
+        }?.collect{ it.trim() }
+        branch = branches?.join(',')
+    }
+    return branch
+}
+
+def gitDiffStat() {
+    return gitExec("diff --shortstat HEAD")
+}
+
+def gitExec(String command) {
+    def git = projectProperty('git') ?: findGit()
+    try {
+        return "${git} ${command}".execute(null, projectDir)?.text?.trim()
+    }
+    catch (e) {
+        return null
+    }
+}
+
+def findGit() {
+    def path = [
+        "/usr/libexec/git-core/git",
+        "/usr/local/bin/git",
+        "/usr/bin/git",
+        "C:\\Program Files (x86)\\Git\\bin\\git.exe",
+        "C:\\Program Files\\Git\\bin\\git.exe",
+    ].find {
+        try { file(it).exists() } catch (e) { }
+    }
+    
+    project.ext.git = path ?: 'git'
+    return project.git
+}
+
+def loadPublishConfig() {
+    def publishConfig = projectProperty('publishConfig')
+    if (publishConfig && project.file(publishConfig).isFile()) {
+        project.file(publishConfig).withInputStream {
+            def props = new Properties()
+            props.load(it)
+            if (props.getProperty('publishUrl')) {
+                project.ext.publishUrl = props.getProperty('publishUrl')
+            }
+            if (props.getProperty('publishUsername')) {
+                project.ext.publishUsername = props.getProperty('publishUsername')
+            }
+            if (props.getProperty('publishPassword')) {
+                project.ext.publishPassword = props.getProperty('publishPassword')
+            }
+        }
+    }
+}

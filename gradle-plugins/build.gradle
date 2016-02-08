@@ -10,10 +10,24 @@ logger.quiet("Building ${group}:${name}:${version}")
 loadPublishConfig()
 
 repositories {
-    mavenCentral()
-    maven {
-        name "artifactory"
-        url artifactoryUrl
+    if (project.hasProperty("withMavenLocal")) {
+        mavenLocal()
+    }
+
+    if (project.hasProperty("buildType") && project.getProperty("buildType") == "oss") {
+        mavenCentral()
+
+        // need a few artifacts not available from Maven Central
+
+        //maven {
+        //    url coprHD_aux_repo
+        //
+
+    } else {
+        maven {
+            name "artifactory"
+            url artifactoryUrl
+        }
     }
 }
 

@@ -13,8 +13,7 @@ GRADLE_OPTS=${GRADLE_OPTS:-"-Xmx512m -XX:MaxPermSize=128m"}
 
 APP_NAME="Gradle"
 APP_BASE_NAME=`basename "$0"`
-
-BUILD_TYPE_PROPERTY=-PbuildType=emc
+BUILD_TYPE_PROPERTY=-PbuildType=oss
 
 # Use the maximum available, or set MAX_FD != -1 to use that value.
 MAX_FD="maximum"
@@ -71,7 +70,7 @@ cd "$SAVED" >&-
 
 CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
 
-SRC_GRADLE_WRAPPER_PROPERTIES=$APP_HOME/gradle/wrapper/gradle-wrapper-emc.properties
+SRC_GRADLE_WRAPPER_PROPERTIES=$APP_HOME/gradle/wrapper/gradle-wrapper-oss.properties
 DEST_GRADLE_WRAPPER_PROPERTIES=$APP_HOME/gradle/wrapper/gradle-wrapper.properties
 
 cp -f $SRC_GRADLE_WRAPPER_PROPERTIES $DEST_GRADLE_WRAPPER_PROPERTIES

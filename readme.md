@@ -6,4 +6,4 @@
 
 ## Building:
 
-* Run `gradle build` in the gradle-plugins directory
+* Run `./gradlew-oss build` in the gradle-plugins directory

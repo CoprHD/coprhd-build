@@ -1,4 +1,4 @@
-# ViPR Platform - Build Repository
+# CoprHD - Build Tools Repository
 
 ## Modules:
 
@@ -6,4 +6,4 @@
 
 ## Building:
 
-* Run `gradle build`
+* Run `gradle build` in the gradle-plugins directory

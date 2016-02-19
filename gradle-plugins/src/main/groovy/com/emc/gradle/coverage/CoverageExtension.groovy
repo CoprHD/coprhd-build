@@ -4,7 +4,7 @@ import org.gradle.api.Project
 
 class CoverageExtension {
     final Project project
-    String jacocoVersion = '0.6.4.201312101107'
+    String jacocoVersion = '0.7.5.201505241946'
     String coverageDir
     
     public CoverageExtension(Project project){

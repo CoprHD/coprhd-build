@@ -45,7 +45,7 @@ fi
 cd %{_builddir}/%{name}-%{version}
 mv %{_sourcedir}/nginx_upstream_check_module-0.3.0 %{_builddir}/%{name}-%{version}/
 mv %{_sourcedir}/headers-more-nginx-module-0.25 %{_builddir}/%{name}-%{version}/
-patch --directory=%{_builddir}/nginx-1.6.2 -p1 < %{_builddir}/%{name}-%{version}/nginx_upstream_check_module-0.3.0/check_1.5.12+.patch
+patch --directory=%{_builddir}/%{name}-%{version} -p1 < %{_builddir}/%{name}-%{version}/nginx_upstream_check_module-0.3.0/check_1.5.12+.patch
 ./configure --prefix=/usr --with-http_ssl_module --with-http_stub_status_module --with-ipv6 --user=root --group=root --add-module=%{_builddir}/%{name}-%{version}/headers-more-nginx-module-0.25 --add-module=%{_builddir}/%{name}-%{version}/nginx_upstream_check_module-0.3.0
 make
 

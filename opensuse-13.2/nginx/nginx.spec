@@ -14,14 +14,14 @@
 #
 
 Name:       nginx
-Version:    1.6.2
+Version:    %{nginx_version}
 Release:    1
 Summary:    Reverse web proxy server
 Vendor:     EMC
 Group:      Development/Tools
 Source0:    %{name}-%{version}.tar.gz
-Source1:    v0.3.0.tar.gz
-Source2:    v0.25.tar.gz
+Source1:    master.tar.gz
+Source2:    v0.30.tar.gz
 License:    BSD-2-Clause
 URL:        http://nginx.org
 BuildArch:  x86_64
@@ -43,10 +43,10 @@ fi
 
 %build
 cd %{_builddir}/%{name}-%{version}
-mv %{_sourcedir}/nginx_upstream_check_module-0.3.0 %{_builddir}/%{name}-%{version}/
-mv %{_sourcedir}/headers-more-nginx-module-0.25 %{_builddir}/%{name}-%{version}/
-patch --directory=%{_builddir}/%{name}-%{version} -p1 < %{_builddir}/%{name}-%{version}/nginx_upstream_check_module-0.3.0/check_1.5.12+.patch
-./configure --prefix=/usr --with-http_ssl_module --with-http_stub_status_module --with-ipv6 --user=root --group=root --add-module=%{_builddir}/%{name}-%{version}/headers-more-nginx-module-0.25 --add-module=%{_builddir}/%{name}-%{version}/nginx_upstream_check_module-0.3.0
+mv %{_sourcedir}/nginx_upstream_check_module-master %{_builddir}/%{name}-%{version}/
+mv %{_sourcedir}/headers-more-nginx-module-0.30 %{_builddir}/%{name}-%{version}/
+patch --directory=%{_builddir}/%{name}-%{version} -p0 < %{_builddir}/%{name}-%{version}/nginx_upstream_check_module-master/check_1.9.2+.patch
+./configure --prefix=/usr --with-http_ssl_module --with-http_stub_status_module --with-ipv6 --user=root --group=root --add-module=%{_builddir}/%{name}-%{version}/headers-more-nginx-module-0.30 --add-module=%{_builddir}/%{name}-%{version}/nginx_upstream_check_module-master
 make
 
 %install
@@ -73,5 +73,5 @@ rm -rf %{_tmppath}
 /usr/sbin/nginx
 
 %changelog
-* Mon Jul 4 2016 Rodrigo Oshiro <ApplianceDevelopmentGroup@emc.com> 0:1.6.2-1
+* Mon Jul 4 2016 Rodrigo Oshiro <ApplianceDevelopmentGroup@emc.com> 0:%{nginx_version}-1
 - Initial Version to wrap nginx as an RPM

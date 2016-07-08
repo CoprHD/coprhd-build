@@ -110,7 +110,7 @@ downloadRPM:
 	rm -fr $(WORKSPACE)/zypper/repo
 	mkdir -p $(WORKSPACE)/zypper/repo
 	find $(WORKSPACE)/zypper/var/cache/zypp/packages -iname \*.rpm -exec cp -f {} $(WORKSPACE)/zypper/repo/ \;
-	rpm --root $(WORKSPACE)/zypper --install --justdb --nodeps --nodigest --nosignature --noscripts /workspace/zypper/repo/*.rpm
+	rpm --root $(WORKSPACE)/zypper --install --justdb --nodeps --nodigest --nosignature --noscripts $(WORKSPACE)/zypper/repo/*.rpm
 
 	# Retrieve the security updates
 	zypper $(ZYPPER_PARAMS) --non-interactive-include-reboot-patches patch -g security --no-recommends --download-only || /bin/true

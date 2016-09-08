@@ -178,13 +178,14 @@ _wait_for_dbsvc_init
         if (extraClasspath) {
             cp.add(extraClasspath)
         }
-        cp.add("\${JAVA_HOME}/lib/tools.jar")
+        cp.add("\${OPEN_JDK_LIB_DIR}/tools.jar")
         return cp.join(":")
     }
     
     String getScript() {
         """#!/bin/sh
 LIB_DIR="${getInstallDir()}/lib"
+OPEN_JDK_LIB_DIR="/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/lib"
 export JAVA_HOME="${getJavaHome()}"
 export PATH="\${JAVA_HOME}/bin:${getInstallDir()}/bin:/bin:/usr/bin"
 ${getExtraDefines()}

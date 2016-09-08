@@ -178,7 +178,7 @@ _wait_for_dbsvc_init
         if (extraClasspath) {
             cp.add(extraClasspath)
         }
-        cp.add("\${LIB_DIR}/tools.jar")
+        cp.add("\${JAVA_HOME}/lib/tools.jar")
         return cp.join(":")
     }
     

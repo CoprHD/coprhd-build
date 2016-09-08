@@ -185,9 +185,9 @@ _wait_for_dbsvc_init
     String getScript() {
         """#!/bin/sh
 LIB_DIR="${getInstallDir()}/lib"
-OPEN_JDK_LIB_DIR="/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/lib"
 export JAVA_HOME="${getJavaHome()}"
 export PATH="\${JAVA_HOME}/bin:${getInstallDir()}/bin:/bin:/usr/bin"
+OPEN_JDK_LIB_DIR="\${JAVA_HOME}/../lib"
 ${getExtraDefines()}
 export CLASSPATH="${getFullClasspath()}"
 ${getExtraCode()}

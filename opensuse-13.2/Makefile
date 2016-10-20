@@ -19,6 +19,19 @@ ZYPPER_PARAMS := --root $(WORKSPACE)/zypper --non-interactive
 ISO_FILE := openSUSE-13.2-DVD-x86_64.iso
 ISO_URL := http://download.opensuse.org/distribution/13.2/iso/$(ISO_FILE)
 PACKAGES := GeoIP GeoIP-data SuSEfirewall2 ant apache2-mod_perl apache2-prefork atop bind-libs bind-utils boost-license1_58_0 ca-certificates-cacert ca-certificates-mozilla createrepo curl dhcpcd docker docker-compose expect fbiterm fontconfig fonts-config fribidi gcc-c++ git git-core glib2-devel gpgme grub2 grub2-i386-pc grub2-x86_64-efi ifplugd inst-source-utils iproute2 iputils java-1_7_0-openjdk java-1_7_0-openjdk-devel java-1_8_0-openjdk java-1_8_0-openjdk-devel keepalived kernel-default kernel-default-devel kernel-source kiwi kiwi-desc-isoboot kiwi-desc-oemboot kiwi-desc-vmxboot kiwi-templates libGeoIP1 libSDL-1_2-0 libXmu6 libaudiofile1 libboost_system1_58_0 libboost_thread1_58_0 libesd0 libgcrypt-devel libgpg-error-devel libmng2 libopenssl-devel libpcrecpp0 libpcreposix0 libqt4 libqt4-sql libqt4-x11 librados2 librbd1 libserf-devel libtool libuuid-devel libvpx1 libxml2-devel lvm2 make mkfontdir mkfontscale mozilla-nss-certs ndisc6 net-tools netcfg nfs-client openssh openssh-fips p7zip pam-devel parted pcre-devel perl-Config-General perl-Error perl-Tk plymouth python-cjson python-devel python-gpgme python-iniparse python-libxml2 python-py python-requests python-setools qemu qemu-tools readline-devel regexp rpm-build setools-libs shim sipcalc sshpass strongswan strongswan-ipsec strongswan-libs0 subversion sudo sysconfig sysconfig-netconfig syslinux sysstat systemd-logger tar telnet unixODBC vim virtualbox virtualbox-host-kmp-default wget xbitmaps xfsprogs xml-commons-jaxp-1.3-apis xmlstarlet xorg-x11-essentials xorg-x11-fonts xorg-x11-server xz-devel zlib-devel
+RPMBUILD_SOURCEDIR := $(WORKSPACE)/nginx
+RPMBUILD_BUILDROOT := $(WORKSPACE)/nginx/BUILDROOT
+RPMBUILD_BUILDDIR := $(WORKSPACE)/nginx/BUILDDIR
+RPMBUILD_TMP_DIR := $(WORKSPACE)/nginx/TMP
+RPMBUILD_RPMS_DIR := $(WORKSPACE)/nginx/RPMS
+RPMBUILD_FLAGS := -bb \
+	--buildroot "$(RPMBUILD_BUILDROOT)" \
+	--define "__spec_build_pre /bin/true" \
+	--define "_topdir $(RPMBUILD_BUILDDIR)" \
+	--define "_builddir $(RPMBUILD_BUILDDIR)" \
+	--define "_tmppath $(RPMBUILD_TMP_DIR)" \
+	--define "_sourcedir $(RPMBUILD_SOURCEDIR)" \
+	--define "_rpmdir $(RPMBUILD_RPMS_DIR)"
 
 ##################################################
 #  Functions
@@ -128,3 +141,5 @@ createREPO: createRPM downloadISO downloadRPM
 clobber:
 	@rm -fr $(WORKSPACE)/iso
 	@rm -fr $(WORKSPACE)/zypper
+	@rm -fr $(WORKSPACE)/nginx/RPM
+	@rm -fr $(WORKSPACE)/nginx/*.gz

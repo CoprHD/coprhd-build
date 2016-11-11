@@ -179,6 +179,9 @@ _wait_for_dbsvc_init
             cp.add(extraClasspath)
         }
         cp.add("\${LIB_DIR}/tools.jar")
+        if (getFileName().startsWith("controllersvc")) {
+            cp.add("/data/drivers/*")
+        }
         return cp.join(":")
     }
     

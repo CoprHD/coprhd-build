@@ -14,11 +14,15 @@ all: createREPO clobber
 #  Parameters
 ##################################################
 JOB := 999
+STORAGEOS_STABLE := $(shell wget --no-check-certificate --quiet -O - https://build.coprhd.org/jenkins/job/CH-coprhd-controller-master/lastStableBuild/buildNumber)
+ifeq ($(SOURCE_RPM),jenkins)
+	JOB := $(STORAGEOS_STABLE)
+endif
 WORKSPACE := $(PWD)
 ZYPPER_PARAMS := --root $(WORKSPACE)/zypper --non-interactive
 ISO_FILE := openSUSE-13.2-DVD-x86_64.iso
 ISO_URL := http://download.opensuse.org/distribution/13.2/iso/$(ISO_FILE)
-PACKAGES := GeoIP GeoIP-data SuSEfirewall2 ant apache2-mod_perl apache2-prefork atop bind-libs bind-utils boost-license1_58_0 ca-certificates-cacert ca-certificates-mozilla createrepo curl dhcpcd docker docker-compose expect fbiterm fontconfig fonts-config fribidi gcc-c++ git git-core glib2-devel gpgme grub2 grub2-i386-pc grub2-x86_64-efi ifplugd inst-source-utils iproute2 iputils java-1_7_0-openjdk java-1_7_0-openjdk-devel java-1_8_0-openjdk java-1_8_0-openjdk-devel keepalived kernel-default kernel-default-devel kernel-source kiwi kiwi-desc-isoboot kiwi-desc-oemboot kiwi-desc-vmxboot kiwi-templates libGeoIP1 libSDL-1_2-0 libXmu6 libaudiofile1 libboost_system1_58_0 libboost_thread1_58_0 libesd0 libgcrypt-devel libgpg-error-devel libmng2 libopenssl-devel libpcrecpp0 libpcreposix0 libqt4 libqt4-sql libqt4-x11 librados2 librbd1 libserf-devel libtool libuuid-devel libvpx1 libxml2-devel lvm2 make mkfontdir mkfontscale mozilla-nss-certs ndisc6 net-tools netcfg nfs-client openssh openssh-fips p7zip pam-devel parted pcre-devel perl-Config-General perl-Error perl-Tk plymouth python-cjson python-devel python-gpgme python-iniparse python-libxml2 python-py python-requests python-setools qemu qemu-tools readline-devel regexp rpm-build setools-libs shim sipcalc sshpass strongswan strongswan-ipsec strongswan-libs0 subversion sudo sysconfig sysconfig-netconfig syslinux sysstat systemd-logger tar telnet unixODBC vim virtualbox virtualbox-host-kmp-default wget xbitmaps xfsprogs xml-commons-jaxp-1.3-apis xmlstarlet xorg-x11-essentials xorg-x11-fonts xorg-x11-server xz-devel zlib-devel
+PACKAGES := GeoIP GeoIP-data SuSEfirewall2 ant apache2-mod_perl apache2-prefork atop bind-libs bind-utils boost-license1_63_0 ca-certificates-cacert ca-certificates-mozilla createrepo curl dhcpcd docker docker-compose expect fbiterm fontconfig fonts-config fribidi gcc-c++ git git-core glib2-devel gpgme grub2 grub2-i386-pc grub2-x86_64-efi ifplugd inst-source-utils iproute2 iputils java-1_7_0-openjdk java-1_7_0-openjdk-devel java-1_8_0-openjdk java-1_8_0-openjdk-devel keepalived kernel-default kernel-default-devel kernel-source kiwi kiwi-desc-isoboot kiwi-desc-oemboot kiwi-desc-vmxboot kiwi-templates libGeoIP1 libSDL-1_2-0 libXmu6 libaudiofile1 libboost_system1_63_0 libboost_thread1_63_0 libesd0 libgcrypt-devel libgpg-error-devel libmng2 libopenssl-devel libpcrecpp0 libpcreposix0 libqt4 libqt4-sql libqt4-x11 librados2 librbd1 libserf-devel libtool libuuid-devel libvpx1 libxml2-devel lvm2 make mkfontdir mkfontscale mozilla-nss-certs ndisc6 net-tools netcfg nfs-client openssh openssh-fips p7zip pam-devel parted pcre-devel perl-Config-General perl-Error perl-Tk plymouth python-cjson python-devel python-gpgme python-iniparse python-libxml2 python-py python-requests python-setools qemu qemu-tools readline-devel regexp rpm-build setools-libs shim sipcalc sshpass strongswan strongswan-ipsec strongswan-libs0 subversion sudo sysconfig sysconfig-netconfig syslinux sysstat systemd-logger tar telnet unixODBC vim virtualbox virtualbox-host-kmp-default wget xbitmaps xfsprogs xml-commons-jaxp-1.3-apis xmlstarlet xorg-x11-essentials xorg-x11-fonts xorg-x11-server xz-devel zlib-devel
 RPMBUILD_SOURCEDIR := $(WORKSPACE)/nginx
 RPMBUILD_BUILDROOT := $(WORKSPACE)/nginx/BUILDROOT
 RPMBUILD_BUILDDIR := $(WORKSPACE)/nginx/BUILDDIR
@@ -71,9 +75,9 @@ downloadRPM:
 	zypper $(ZYPPER_PARAMS) addrepo --name suse-42.1-filesystems-ceph --no-gpgcheck http://download.opensuse.org/repositories/filesystems:/ceph/openSUSE_Leap_42.1 suse-42.1-filesystems-ceph
 	zypper $(ZYPPER_PARAMS) addrepo --name suse-13.2-seife --no-gpgcheck http://download.opensuse.org/repositories/home:/seife:/testing/openSUSE_13.2 suse-13.2-seife
 	zypper $(ZYPPER_PARAMS) addrepo --name suse-13.2-monitoring --no-gpgcheck http://download.opensuse.org/repositories/server:/monitoring/openSUSE_13.2 suse-13.2-monitoring
-	zypper $(ZYPPER_PARAMS) addrepo --name suse-13.2-http --no-gpgcheck http://download.opensuse.org/repositories/server:/http/openSUSE_13.2 suse-13.2-http
 	zypper $(ZYPPER_PARAMS) addrepo --name suse-13.2-network --no-gpgcheck http://download.opensuse.org/repositories/network:/utilities/openSUSE_13.2 suse-13.2-network
 	zypper $(ZYPPER_PARAMS) addrepo --name suse-13.2-python --no-gpgcheck http://download.opensuse.org/repositories/devel:/languages:/python/openSUSE_13.2 suse-13.2-python
+	zypper $(ZYPPER_PARAMS) addrepo --name suse-13.2-clib --no-gpgcheck http://download.opensuse.org/repositories/devel:/libraries:/c_c++/openSUSE_13.2 suse-13.2-clib
 
 	# Define the priorities of the repositories
 	zypper $(ZYPPER_PARAMS) modifyrepo --priority 99 suse-13.2-iso
@@ -85,9 +89,9 @@ downloadRPM:
 	zypper $(ZYPPER_PARAMS) modifyrepo --priority  3 suse-42.1-filesystems-ceph
 	zypper $(ZYPPER_PARAMS) modifyrepo --priority  3 suse-13.2-seife
 	zypper $(ZYPPER_PARAMS) modifyrepo --priority  3 suse-13.2-monitoring
-	zypper $(ZYPPER_PARAMS) modifyrepo --priority  3 suse-13.2-http
 	zypper $(ZYPPER_PARAMS) modifyrepo --priority  5 suse-13.2-network
 	zypper $(ZYPPER_PARAMS) modifyrepo --priority  5 suse-13.2-python
+	zypper $(ZYPPER_PARAMS) modifyrepo --priority  4 suse-13.2-clib
 	zypper $(ZYPPER_PARAMS) refresh
 
 	# Download packages
